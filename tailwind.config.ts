@@ -47,6 +47,17 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Custom sensor dashboard colors
+        sensor: {
+          bg: "hsl(var(--sensor-bg))",
+          panel: "hsl(var(--sensor-panel))",
+          accent: "hsl(var(--sensor-accent))",
+          success: "hsl(var(--sensor-success))",
+          warning: "hsl(var(--sensor-warning))",
+          danger: "hsl(var(--sensor-danger))",
+          "text-primary": "hsl(var(--sensor-text-primary))",
+          "text-secondary": "hsl(var(--sensor-text-secondary))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -62,6 +73,15 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-panel': 'var(--gradient-panel)',
+        'gradient-glow': 'var(--gradient-glow)',
+      },
+      boxShadow: {
+        'panel': 'var(--shadow-panel)',
+        'glow': 'var(--shadow-glow)',
       },
       keyframes: {
         "accordion-down": {
@@ -80,10 +100,32 @@ export default {
             height: "0",
           },
         },
+        "pulse-glow": {
+          "0%, 100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+          "50%": {
+            opacity: "0.8",
+            transform: "scale(1.05)",
+          },
+        },
+        "slide-up": {
+          from: {
+            opacity: "0",
+            transform: "translateY(20px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "slide-up": "slide-up 0.5s ease-out",
       },
     },
   },

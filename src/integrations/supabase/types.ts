@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      sensor_readings: {
+        Row: {
+          created_at: string
+          device_id: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          pitch: number | null
+          roll: number | null
+          soil_moisture: number | null
+          temperature: number | null
+          timestamp: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          pitch?: number | null
+          roll?: number | null
+          soil_moisture?: number | null
+          temperature?: number | null
+          timestamp?: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          pitch?: number | null
+          roll?: number | null
+          soil_moisture?: number | null
+          temperature?: number | null
+          timestamp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
