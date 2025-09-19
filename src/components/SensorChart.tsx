@@ -113,19 +113,16 @@ export const SensorChart = ({ data }: SensorChartProps) => {
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend />
-                {Object.keys(deviceData).map((deviceId, index) => (
-                  <Line 
-                    key={deviceId}
-                    type="monotone" 
-                    dataKey="temperature" 
-                    stroke={index === 0 ? "hsl(var(--sensor-accent))" : "hsl(var(--sensor-success))"}
-                    strokeWidth={2}
-                    dot={{ fill: index === 0 ? "hsl(var(--sensor-accent))" : "hsl(var(--sensor-success))", strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6 }}
-                    name={`${deviceId} Temperature (°C)`}
-                    connectNulls={false}
-                  />
-                ))}
+                <Line 
+                  type="monotone" 
+                  dataKey="temperature" 
+                  stroke="hsl(var(--sensor-accent))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--sensor-accent))", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Temperature (°C)"
+                  connectNulls={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </TabsContent>
@@ -145,19 +142,16 @@ export const SensorChart = ({ data }: SensorChartProps) => {
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend />
-                {Object.keys(deviceData).map((deviceId, index) => (
-                  <Line 
-                    key={deviceId}
-                    type="monotone" 
-                    dataKey="soilMoisture" 
-                    stroke={index === 0 ? "hsl(var(--sensor-success))" : "hsl(var(--sensor-warning))"}
-                    strokeWidth={2}
-                    dot={{ fill: index === 0 ? "hsl(var(--sensor-success))" : "hsl(var(--sensor-warning))", strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6 }}
-                    name={`${deviceId} Soil Moisture (%)`}
-                    connectNulls={false}
-                  />
-                ))}
+                <Line 
+                  type="monotone" 
+                  dataKey="soilMoisture" 
+                  stroke="hsl(var(--sensor-success))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--sensor-success))", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Soil Moisture (%)"
+                  connectNulls={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </TabsContent>
