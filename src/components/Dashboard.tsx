@@ -18,14 +18,22 @@ import { useToast } from "@/hooks/use-toast";
 
 interface SensorReading {
   id: string;
-  device_id: string;
-  soil_moisture?: number;
-  pitch?: number;
-  roll?: number;
+  node_id: number;
+  packet_no: number;
+  accel_x?: number;
+  accel_y?: number;
+  accel_z?: number;
+  gyro_x?: number;
+  gyro_y?: number;
+  gyro_z?: number;
   temperature?: number;
+  soil_raw?: number;
+  soil_moisture?: number;
   latitude?: number;
   longitude?: number;
-  timestamp: string;
+  rssi?: number;
+  snr?: number;
+  created_at: string;
 }
 
 export const Dashboard = () => {
@@ -40,7 +48,7 @@ export const Dashboard = () => {
       const { data, error } = await supabase
         .from('sensor_readings')
         .select('*')
-        .order('timestamp', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(50);
 
       if (error) throw error;
@@ -90,18 +98,18 @@ export const Dashboard = () => {
     };
   }, []);
 
-  // Get latest readings for each device
+  // Get latest readings for each node
   const getLatestReadings = () => {
-    const deviceReadings: Record<string, SensorReading> = {};
+    const nodeReadings: Record<number, SensorReading> = {};
     
     sensorData.forEach(reading => {
-      if (!deviceReadings[reading.device_id] || 
-          new Date(reading.timestamp) > new Date(deviceReadings[reading.device_id].timestamp)) {
-        deviceReadings[reading.device_id] = reading;
+      if (!nodeReadings[reading.node_id] || 
+          new Date(reading.created_at) > new Date(nodeReadings[reading.node_id].created_at)) {
+        nodeReadings[reading.node_id] = reading;
       }
     });
     
-    return Object.values(deviceReadings);
+    return Object.values(nodeReadings);
   };
 
   const latestReadings = getLatestReadings();
@@ -111,12 +119,12 @@ export const Dashboard = () => {
     .filter(reading => reading.latitude && reading.longitude)
     .map(reading => ({
       id: reading.id,
-      deviceId: reading.device_id,
+      node_id: reading.node_id,
       latitude: reading.latitude!,
       longitude: reading.longitude!,
-      timestamp: reading.timestamp,
+      timestamp: reading.created_at,
       temperature: reading.temperature,
-      soilMoisture: reading.soil_moisture,
+      soil_moisture: reading.soil_moisture,
     }));
 
   // Status determination helper
@@ -132,9 +140,13 @@ export const Dashboard = () => {
         if (value < 20 || value > 80) return "critical";
         if (value < 30 || value > 70) return "warning";
         return "normal";
-      case "orientation":
-        if (Math.abs(value) > 30) return "critical";
-        if (Math.abs(value) > 15) return "warning";
+      case "accel":
+        if (Math.abs(value) > 2000) return "critical";
+        if (Math.abs(value) > 1000) return "warning";
+        return "normal";
+      case "gyro":
+        if (Math.abs(value) > 250) return "critical";
+        if (Math.abs(value) > 100) return "warning";
         return "normal";
       default:
         return "normal";
@@ -214,7 +226,7 @@ export const Dashboard = () => {
                       unit="°C"
                       icon={Thermometer}
                       status={getStatus("temperature", reading.temperature)}
-                      deviceId={reading.device_id}
+                      deviceId={`Node ${reading.node_id}`}
                     />
                   )}
                   {reading.soil_moisture !== null && reading.soil_moisture !== undefined && (
@@ -224,27 +236,27 @@ export const Dashboard = () => {
                       unit="%"
                       icon={Droplets}
                       status={getStatus("moisture", reading.soil_moisture)}
-                      deviceId={reading.device_id}
+                      deviceId={`Node ${reading.node_id}`}
                     />
                   )}
-                  {reading.pitch !== null && reading.pitch !== undefined && (
+                  {reading.accel_x !== null && reading.accel_x !== undefined && (
                     <SensorCard
-                      title="Pitch"
-                      value={reading.pitch}
-                      unit="°"
+                      title="Accel X"
+                      value={reading.accel_x}
+                      unit="m/s²"
                       icon={Compass}
-                      status={getStatus("orientation", reading.pitch)}
-                      deviceId={reading.device_id}
+                      status={getStatus("accel", reading.accel_x)}
+                      deviceId={`Node ${reading.node_id}`}
                     />
                   )}
-                  {reading.roll !== null && reading.roll !== undefined && (
+                  {reading.gyro_x !== null && reading.gyro_x !== undefined && (
                     <SensorCard
-                      title="Roll"
-                      value={reading.roll}
-                      unit="°"
+                      title="Gyro X"
+                      value={reading.gyro_x}
+                      unit="°/s"
                       icon={RotateCcw}
-                      status={getStatus("orientation", reading.roll)}
-                      deviceId={reading.device_id}
+                      status={getStatus("gyro", reading.gyro_x)}
+                      deviceId={`Node ${reading.node_id}`}
                     />
                   )}
                 </div>
@@ -264,12 +276,16 @@ export const Dashboard = () => {
           <section>
             <SensorChart data={sensorData.map(reading => ({
               id: reading.id,
-              deviceId: reading.device_id,
-              soilMoisture: reading.soil_moisture,
-              pitch: reading.pitch,
-              roll: reading.roll,
+              nodeId: reading.node_id,
+              soil_moisture: reading.soil_moisture,
+              accel_x: reading.accel_x,
+              accel_y: reading.accel_y,
+              accel_z: reading.accel_z,
+              gyro_x: reading.gyro_x,
+              gyro_y: reading.gyro_y,
+              gyro_z: reading.gyro_z,
               temperature: reading.temperature,
-              timestamp: reading.timestamp
+              timestamp: reading.created_at
             }))} />
           </section>
         </div>

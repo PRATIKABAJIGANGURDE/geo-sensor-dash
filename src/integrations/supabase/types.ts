@@ -16,40 +16,61 @@ export type Database = {
     Tables: {
       sensor_readings: {
         Row: {
+          accel_x: number | null
+          accel_y: number | null
+          accel_z: number | null
           created_at: string
-          device_id: string
+          gyro_x: number | null
+          gyro_y: number | null
+          gyro_z: number | null
           id: string
           latitude: number | null
           longitude: number | null
-          pitch: number | null
-          roll: number | null
+          node_id: number
+          packet_no: number
+          rssi: number | null
+          snr: number | null
           soil_moisture: number | null
+          soil_raw: number | null
           temperature: number | null
-          timestamp: string
         }
         Insert: {
+          accel_x?: number | null
+          accel_y?: number | null
+          accel_z?: number | null
           created_at?: string
-          device_id: string
+          gyro_x?: number | null
+          gyro_y?: number | null
+          gyro_z?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
-          pitch?: number | null
-          roll?: number | null
+          node_id: number
+          packet_no: number
+          rssi?: number | null
+          snr?: number | null
           soil_moisture?: number | null
+          soil_raw?: number | null
           temperature?: number | null
-          timestamp?: string
         }
         Update: {
+          accel_x?: number | null
+          accel_y?: number | null
+          accel_z?: number | null
           created_at?: string
-          device_id?: string
+          gyro_x?: number | null
+          gyro_y?: number | null
+          gyro_z?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
-          pitch?: number | null
-          roll?: number | null
+          node_id?: number
+          packet_no?: number
+          rssi?: number | null
+          snr?: number | null
           soil_moisture?: number | null
+          soil_raw?: number | null
           temperature?: number | null
-          timestamp?: string
         }
         Relationships: []
       }

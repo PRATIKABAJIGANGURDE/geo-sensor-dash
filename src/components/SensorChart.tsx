@@ -5,10 +5,14 @@ import { Activity, TrendingUp } from "lucide-react";
 
 interface SensorData {
   id: string;
-  deviceId: string;
-  soilMoisture?: number;
-  pitch?: number;
-  roll?: number;
+  nodeId: number;
+  soil_moisture?: number;
+  accel_x?: number;
+  accel_y?: number;
+  accel_z?: number;
+  gyro_x?: number;
+  gyro_y?: number;
+  gyro_z?: number;
   temperature?: number;
   timestamp: string;
 }
@@ -18,12 +22,12 @@ interface SensorChartProps {
 }
 
 export const SensorChart = ({ data }: SensorChartProps) => {
-  // Group data by device for better visualization
-  const deviceData = data.reduce((acc, reading) => {
-    if (!acc[reading.deviceId]) {
-      acc[reading.deviceId] = [];
+  // Group data by node for better visualization
+  const nodeData = data.reduce((acc, reading) => {
+    if (!acc[reading.nodeId]) {
+      acc[reading.nodeId] = [];
     }
-    acc[reading.deviceId].push({
+    acc[reading.nodeId].push({
       ...reading,
       time: new Date(reading.timestamp).toLocaleTimeString('en-US', { 
         hour: '2-digit', 
@@ -32,11 +36,11 @@ export const SensorChart = ({ data }: SensorChartProps) => {
       timestamp: new Date(reading.timestamp).getTime()
     });
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<number, any[]>);
 
-  // Sort each device's data by timestamp
-  Object.keys(deviceData).forEach(deviceId => {
-    deviceData[deviceId].sort((a, b) => a.timestamp - b.timestamp);
+  // Sort each node's data by timestamp
+  Object.keys(nodeData).forEach(nodeId => {
+    nodeData[nodeId as any].sort((a, b) => a.timestamp - b.timestamp);
   });
 
   // Combine all data for multi-device charts
@@ -90,11 +94,11 @@ export const SensorChart = ({ data }: SensorChartProps) => {
             <TabsTrigger value="moisture" className="data-[state=active]:bg-sensor-accent data-[state=active]:text-background">
               Soil Moisture
             </TabsTrigger>
-            <TabsTrigger value="orientation" className="data-[state=active]:bg-sensor-accent data-[state=active]:text-background">
-              Orientation
+            <TabsTrigger value="accel" className="data-[state=active]:bg-sensor-accent data-[state=active]:text-background">
+              Accelerometer
             </TabsTrigger>
-            <TabsTrigger value="combined" className="data-[state=active]:bg-sensor-accent data-[state=active]:text-background">
-              All Sensors
+            <TabsTrigger value="gyro" className="data-[state=active]:bg-sensor-accent data-[state=active]:text-background">
+              Gyroscope
             </TabsTrigger>
           </TabsList>
 
@@ -142,9 +146,9 @@ export const SensorChart = ({ data }: SensorChartProps) => {
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend />
-                <Line 
+                 <Line 
                   type="monotone" 
-                  dataKey="soilMoisture" 
+                  dataKey="soil_moisture" 
                   stroke="hsl(var(--sensor-success))"
                   strokeWidth={2}
                   dot={{ fill: "hsl(var(--sensor-success))", strokeWidth: 2, r: 4 }}
@@ -156,7 +160,7 @@ export const SensorChart = ({ data }: SensorChartProps) => {
             </ResponsiveContainer>
           </TabsContent>
 
-          <TabsContent value="orientation" className="mt-6">
+          <TabsContent value="accel" className="mt-6">
             <ResponsiveContainer width="100%" height={chartConfig.height}>
               <LineChart data={combinedData} margin={chartConfig.margin}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -173,85 +177,85 @@ export const SensorChart = ({ data }: SensorChartProps) => {
                 <Legend />
                 <Line 
                   type="monotone" 
-                  dataKey="pitch" 
+                  dataKey="accel_x" 
                   stroke="hsl(var(--sensor-accent))"
                   strokeWidth={2}
                   dot={{ fill: "hsl(var(--sensor-accent))", strokeWidth: 2, r: 4 }}
                   activeDot={{ r: 6 }}
-                  name="Pitch (°)"
+                  name="Accel X (m/s²)"
                   connectNulls={false}
                 />
                 <Line 
                   type="monotone" 
-                  dataKey="roll" 
+                  dataKey="accel_y" 
                   stroke="hsl(var(--sensor-success))"
                   strokeWidth={2}
                   dot={{ fill: "hsl(var(--sensor-success))", strokeWidth: 2, r: 4 }}
                   activeDot={{ r: 6 }}
-                  name="Roll (°)"
+                  name="Accel Y (m/s²)"
+                  connectNulls={false}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="accel_z" 
+                  stroke="hsl(var(--sensor-warning))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--sensor-warning))", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Accel Z (m/s²)"
                   connectNulls={false}
                 />
               </LineChart>
             </ResponsiveContainer>
           </TabsContent>
 
-          <TabsContent value="combined" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div>
-                <h4 className="text-sm font-medium text-sensor-text-secondary mb-2">Temperature & Moisture</h4>
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={combinedData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="time" stroke="hsl(var(--sensor-text-secondary))" fontSize={10} />
-                    <YAxis stroke="hsl(var(--sensor-text-secondary))" fontSize={10} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="temperature" 
-                      stroke="hsl(var(--sensor-accent))"
-                      strokeWidth={1.5}
-                      dot={false}
-                      name="Temperature (°C)"
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="soilMoisture" 
-                      stroke="hsl(var(--sensor-success))"
-                      strokeWidth={1.5}
-                      dot={false}
-                      name="Soil Moisture (%)"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-sensor-text-secondary mb-2">Pitch & Roll</h4>
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={combinedData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="time" stroke="hsl(var(--sensor-text-secondary))" fontSize={10} />
-                    <YAxis stroke="hsl(var(--sensor-text-secondary))" fontSize={10} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="pitch" 
-                      stroke="hsl(var(--sensor-warning))"
-                      strokeWidth={1.5}
-                      dot={false}
-                      name="Pitch (°)"
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="roll" 
-                      stroke="hsl(var(--sensor-danger))"
-                      strokeWidth={1.5}
-                      dot={false}
-                      name="Roll (°)"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+          <TabsContent value="gyro" className="mt-6">
+            <ResponsiveContainer width="100%" height={chartConfig.height}>
+              <LineChart data={combinedData} margin={chartConfig.margin}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="time" 
+                  stroke="hsl(var(--sensor-text-secondary))"
+                  fontSize={12}
+                />
+                <YAxis 
+                  stroke="hsl(var(--sensor-text-secondary))"
+                  fontSize={12}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="gyro_x" 
+                  stroke="hsl(var(--sensor-accent))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--sensor-accent))", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Gyro X (°/s)"
+                  connectNulls={false}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="gyro_y" 
+                  stroke="hsl(var(--sensor-success))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--sensor-success))", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Gyro Y (°/s)"
+                  connectNulls={false}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="gyro_z" 
+                  stroke="hsl(var(--sensor-warning))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--sensor-warning))", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Gyro Z (°/s)"
+                  connectNulls={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </TabsContent>
         </Tabs>
       </CardContent>

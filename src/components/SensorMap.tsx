@@ -7,12 +7,12 @@ import 'leaflet/dist/leaflet.css';
 
 interface SensorLocation {
   id: string;
-  deviceId: string;
+  node_id: number;
   latitude: number;
   longitude: number;
   timestamp: string;
   temperature?: number;
-  soilMoisture?: number;
+  soil_moisture?: number;
 }
 
 interface SensorMapProps {
@@ -77,10 +77,10 @@ export const SensorMap = ({ locations }: SensorMapProps) => {
               >
                 <Popup className="sensor-popup">
                   <div style={{ color: 'hsl(210 40% 98%)', background: 'hsl(222 20% 5%)', padding: '8px', borderRadius: '6px' }}>
-                    <strong style={{ color: 'hsl(188 95% 55%)' }}>{location.deviceId}</strong><br/>
+                    <strong style={{ color: 'hsl(188 95% 55%)' }}>Node {location.node_id}</strong><br/>
                     <small>Last update: {new Date(location.timestamp).toLocaleString()}</small><br/>
                     {location.temperature && <small>Temp: {location.temperature}°C</small>}<br/>
-                    {location.soilMoisture && <small>Moisture: {location.soilMoisture}%</small>}
+                    {location.soil_moisture && <small>Moisture: {location.soil_moisture}%</small>}
                   </div>
                 </Popup>
               </Marker>
